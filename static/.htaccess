@@ -1,0 +1,13 @@
+Options -MultiViews
+RewriteEngine On
+RewriteBase /
+
+# Serve existing files/dirs directly
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Route /gracias to gracias.html
+RewriteRule ^gracias/?$ /gracias.html [L]
+
+# Fallback to index.html
+RewriteRule ^ /index.html [L]
