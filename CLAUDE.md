@@ -16,7 +16,7 @@ Landing page de captación de leads para vender subcuentas GoHighLevel (GHL) a $
 - **Output**: Sitio estático via `@sveltejs/adapter-static`
 - **Lenguaje**: TypeScript
 - **Bundler**: Vite 8
-- **Deploy**: Hostinger (subir carpeta `build/` a `public_html`)
+- **Deploy**: Hostinger — subdominio `ghl.flamiagroup.com` apunta a `public_html/build/`
 
 ## Estructura
 
@@ -30,11 +30,31 @@ src/routes/
 build/                # Output estático listo para Hostinger (gitignoreado)
 ```
 
-## Pendiente
+## Deploy en Hostinger
 
-- [ ] Reemplazar `YOUR_WEBHOOK_URL` en `src/routes/+page.svelte` línea 2 con el webhook real de GHL
-- [ ] Correr `npm run build` después de agregar el webhook
-- [ ] Subir carpeta `build/` a Hostinger → `public_html/`
+El subdominio `ghl.flamiagroup.com` tiene document root en `public_html/build/`.
+El site principal `flamiagroup.com` vive en `public_html/`.
+
+**Flujo de deploy:**
+
+```bash
+npm run build        # Genera build/ con los archivos estáticos
+```
+
+Luego en Hostinger File Manager, reemplazar el contenido de `public_html/build/` con el nuevo `build/`:
+- Siempre subir: `index.html`, `gracias.html`, carpeta `_app/` completa
+- El `.htaccess` y `logo.png` solo si cambiaron
+
+**Nota:** `www.ghl.flamiagroup.com` no funciona — es normal, los subdominios no usan `www`.
+
+## .htaccess
+
+El `build/.htaccess` maneja dos cosas:
+1. Redirige `/gracias` → `gracias.html`
+2. Fallback SPA a `index.html` para rutas que no existen como archivo
+3. Sobreescribe el CSP restrictivo de Hostinger para que SvelteKit pueda ejecutar sus módulos JS
+
+El orden de las reglas importa: las `RewriteCond` deben estar **antes** de la regla fallback, no antes de la regla de `/gracias`.
 
 ## Comandos
 

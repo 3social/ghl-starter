@@ -2,6 +2,8 @@
 
 Landing page de captación de leads para vender subcuentas GoHighLevel a $97/mes.
 
+Live: **https://ghl.flamiagroup.com**
+
 ## ¿Qué hace?
 
 1. Muestra la oferta con hero, features y social proof
@@ -9,7 +11,7 @@ Landing page de captación de leads para vender subcuentas GoHighLevel a $97/mes
 3. Envía los datos al webhook de GHL vía `fetch` POST → crea el contacto automáticamente
 4. Redirige a la página de gracias
 
-## Setup
+## Setup local
 
 ```bash
 npm install
@@ -26,13 +28,27 @@ const WEBHOOK_URL = 'YOUR_WEBHOOK_URL';
 
 Para obtener la URL en GHL: **Automation → Create Workflow → Trigger: Inbound Webhook**.
 
-## Build y Deploy en Hostinger
+## Flujo de cambios
 
 ```bash
+# 1. Editar src/
+# 2. Compilar
 npm run build
+
+# 3. Git
+git add .
+git commit -m "descripción"
+git push
+
+# 4. Hostinger: subir contenido de build/ a public_html/build/
+#    Siempre reemplazar: index.html, gracias.html, _app/
 ```
 
-Sube todo el contenido de la carpeta `build/` a `public_html/` en Hostinger via File Manager o FTP.
+## Deploy en Hostinger
+
+- Subdominio `ghl.flamiagroup.com` → document root: `public_html/build/`
+- Site principal `flamiagroup.com` → `public_html/`
+- Usar `https://ghl.flamiagroup.com` (sin `www`)
 
 ## Páginas
 
