@@ -44,15 +44,26 @@ build/                # Output estático listo para Hostinger (gitignoreado)
 El subdominio `ghl.flamiagroup.com` tiene document root en `public_html/build/`.
 El site principal `flamiagroup.com` vive en `public_html/`.
 
-**Flujo de deploy:**
+**Deploy automático desde Git.** Hostinger está conectado al repositorio y corre
+el build en el servidor: un push a `main` reconstruye y publica el sitio solo.
+**No se suben archivos por File Manager.**
 
 ```bash
-npm run build        # Genera build/ con los archivos estáticos
+npm run check        # Verificar antes de pushear
+npm run build        # Verificar que compila (opcional, local)
+git push origin main # Esto despliega
 ```
 
-Luego en Hostinger File Manager, reemplazar el contenido de `public_html/build/` con el nuevo `build/`:
-- Siempre subir: `index.html`, `gracias.html`, `sitemap.xml`, carpeta `_app/` completa
-- El `.htaccess`, `robots.txt` y `logo.png` solo si cambiaron
+`build/` está gitignoreada a propósito: la genera Hostinger en cada deploy, no
+el repositorio. Correr `npm run build` en local sirve solo para verificar.
+
+Ajustes del build en hPanel (Avanzado → Git):
+- Build command: `npm run build`
+- Output directory: `build`
+
+Todo lo que vive en `static/` —`.htaccess`, `robots.txt`, `logo.png`— se copia
+automáticamente a `build/` durante el build, así que también se despliega solo.
+Al añadir un archivo estático nuevo, va en `static/`, nunca directo al servidor.
 
 **Nota:** `www.ghl.flamiagroup.com` no funciona — es normal, los subdominios no usan `www`.
 
