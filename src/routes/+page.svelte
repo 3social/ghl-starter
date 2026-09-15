@@ -1,4 +1,10 @@
 <script lang="ts">
+	import Seo from '$lib/seo/Seo.svelte';
+	import { FAQS } from '$lib/seo/faq';
+	import { graph, organizationSchema, websiteSchema, serviceSchema, faqSchema } from '$lib/seo/schema';
+
+	const jsonLd = graph(organizationSchema(), websiteSchema(), serviceSchema(), faqSchema());
+
 	const WEBHOOK_URL = 'https://personaldev-n8n.aaqnec.easypanel.host/webhook/landing-ghl-venta';
 
 	let nombre = $state('');
@@ -27,17 +33,25 @@
 	}
 </script>
 
-<svelte:head>
-	<title>GHL Starter — Tu CRM y Sistema de Marketing Completo por $97/mes</title>
-	<meta name="description" content="Subcuenta de GoHighLevel lista para usar. CRM, funnels, automatizaciones, email, SMS y calendario — todo configurado por ti desde $97/mes." />
-</svelte:head>
+<Seo
+	title="GoHighLevel en Español Costa Rica | Subcuenta CRM $97/mes"
+	description="Subcuenta de GoHighLevel en español lista en 48 h por $97/mes: CRM, embudos, citas y automatizaciones. Setup incluido (valor $300). Costa Rica y LATAM."
+	path="/"
+	{jsonLd}
+/>
 
 <main>
 	<!-- NAVBAR -->
 	<header class="navbar">
 		<div class="container">
 			<a href="/" class="logo-link">
-				<img src="/logo.png" alt="Flamia Group" class="logo-img" />
+				<img
+					src="/logo.png"
+					alt="Flamia Group — subcuentas de GoHighLevel en español"
+					class="logo-img"
+					width="140"
+					height="40"
+				/>
 			</a>
 			<span class="navbar-tagline">Un servicio de Flamiagroup</span>
 		</div>
@@ -46,11 +60,17 @@
 	<!-- HERO -->
 	<section class="hero">
 		<div class="container">
-			<div class="badge">GoHighLevel · Subcuenta Configurada</div>
-			<h1>El CRM todo-en-uno que tu negocio necesita,<br /><span>listo en 48h por <em>$97/mes</em></span></h1>
+			<div class="badge">GoHighLevel en español · Costa Rica y LATAM</div>
+			<h1>
+				Tu subcuenta de GoHighLevel en español,<br /><span
+					>lista en 48 h por <em>$97/mes</em></span
+				>
+			</h1>
 			<p class="subtitle">
-				Para coaches, consultores, agencias y negocios locales.<br />
-				Capta leads, automatiza seguimientos y cierra más clientes — sin complicaciones técnicas.
+				El CRM todo-en-uno para agencias, coaches, consultores y negocios locales en Costa Rica y
+				toda Latinoamérica.<br />
+				Capta leads, automatiza seguimientos por WhatsApp y email, y cierra más clientes — sin complicaciones
+				técnicas.
 			</p>
 			<a href="#form" class="btn-hero">Quiero mi subcuenta GHL →</a>
 			<p class="hero-sub">Setup profesional incluido · Valor $300 · Sin contratos</p>
@@ -62,7 +82,7 @@
 		<div class="container">
 			<div class="what-inner">
 				<div class="what-text">
-					<h2>¿Qué es una subcuenta de GoHighLevel?</h2>
+					<h2>¿Qué es una subcuenta de GoHighLevel y por qué cuesta $97 al mes?</h2>
 					<p>
 						GoHighLevel (GHL) es la plataforma #1 usada por agencias de marketing en todo el mundo.
 						Una <strong>subcuenta</strong> es tu propio espacio dentro de GHL, completamente configurado
@@ -97,36 +117,36 @@
 	<!-- FEATURES -->
 	<section class="features">
 		<div class="container">
-			<h2>Todo lo que viene dentro de tu subcuenta</h2>
+			<h2>Todo lo que incluye tu subcuenta de GoHighLevel en español</h2>
 			<div class="grid">
 				<div class="feature-card">
 					<span class="icon">📊</span>
-					<h3>CRM con Pipeline Visual</h3>
+					<h3>CRM con pipeline de ventas visual</h3>
 					<p>Ve exactamente en qué etapa está cada prospecto. Mueve deals con drag & drop y cierra más ventas.</p>
 				</div>
 				<div class="feature-card">
 					<span class="icon">📅</span>
-					<h3>Calendario de Citas</h3>
+					<h3>Calendario de citas online</h3>
 					<p>Tus clientes agendan directamente en tu calendario. Sin emails de ida y vuelta ni dobles reservas.</p>
 				</div>
 				<div class="feature-card">
 					<span class="icon">🤖</span>
-					<h3>Automatizaciones (Workflows)</h3>
+					<h3>Automatizaciones y workflows</h3>
 					<p>Seguimientos automáticos por email y SMS cuando alguien llena un form, agenda o no aparece.</p>
 				</div>
 				<div class="feature-card">
 					<span class="icon">🚀</span>
-					<h3>Site o Landing Page</h3>
+					<h3>Embudos y landing pages que convierten</h3>
 					<p>Página web o landing page lista para capturar leads, mostrar tu servicio y convertir visitantes.</p>
 				</div>
 				<div class="feature-card">
 					<span class="icon">📧</span>
-					<h3>Email Templates</h3>
+					<h3>Email marketing con templates listos</h3>
 					<p>Templates profesionales listos para enviar campañas, recordatorios y secuencias de nurturing.</p>
 				</div>
 				<div class="feature-card">
 					<span class="icon">🎯</span>
-					<h3>Setup + Onboarding 1:1</h3>
+					<h3>Setup profesional y onboarding 1:1</h3>
 					<p>Configuramos todo por ti y te damos 30 minutos de onboarding para que arranques sin fricciones.</p>
 				</div>
 			</div>
@@ -136,6 +156,7 @@
 	<!-- SOCIAL PROOF -->
 	<section class="proof">
 		<div class="container">
+			<h2 class="sr-only">GHL Starter en números</h2>
 			<div class="proof-grid">
 				<div class="stat"><strong>$300</strong><span>Setup incluido gratis</span></div>
 				<div class="stat"><strong>$97/mes</strong><span>Todo incluido</span></div>
@@ -149,7 +170,7 @@
 		<div class="container">
 			<div class="affiliate-inner">
 				<div class="affiliate-badge">Opción alternativa</div>
-				<h2>¿Prefieres tu propia cuenta GHL?</h2>
+				<h2>¿Prefieres comprar tu propia cuenta de GoHighLevel?</h2>
 				<p>
 					Compra GoHighLevel a través de nuestro link de afiliados y <strong>te configuramos una subcuenta lista para operar</strong> — sin costo adicional.<br />
 					Un setup profesional que normalmente vale <em>$300</em>, incluido por comprar con nosotros.
@@ -181,7 +202,7 @@
 	<!-- WHO IS IT FOR -->
 	<section class="who">
 		<div class="container">
-			<h2>¿Para quién es GHL Starter?</h2>
+			<h2>¿Para quién es GHL Starter? Agencias, coaches y negocios locales</h2>
 			<div class="who-grid">
 				<div class="who-card">🧑‍💼<p>Coaches y consultores que quieren un sistema profesional para captar y gestionar clientes.</p></div>
 				<div class="who-card">🏢<p>Agencias pequeñas que necesitan un CRM para gestionar su propio pipeline sin pagar $497/mes.</p></div>
@@ -190,12 +211,36 @@
 		</div>
 	</section>
 
+	<!-- FAQ -->
+	<section class="faq" id="faq">
+		<div class="container">
+			<h2>Preguntas frecuentes sobre GoHighLevel en español</h2>
+			<p class="faq-intro">
+				Las dudas que más nos escriben agencias y negocios de Costa Rica y LATAM antes de contratar.
+			</p>
+			<div class="faq-list">
+				{#each FAQS as faq (faq.q)}
+					<details class="faq-item">
+						<summary>
+							<h3>{faq.q}</h3>
+							<span class="faq-chevron" aria-hidden="true"></span>
+						</summary>
+						<p>{faq.a}</p>
+					</details>
+				{/each}
+			</div>
+			<p class="faq-cta">
+				¿Te queda otra duda? <a href="#form">Escríbenos y te respondemos hoy mismo</a>.
+			</p>
+		</div>
+	</section>
+
 	<!-- FORM -->
 	<section class="form-section" id="form">
 		<div class="container">
 			<div class="form-wrapper">
 				<div class="form-copy">
-					<h2>Empieza hoy — te contactamos hoy mismo</h2>
+					<h2>Solicita tu subcuenta de GoHighLevel — te contactamos hoy mismo</h2>
 					<p>Déjanos tus datos y un asesor te mostrará la plataforma en vivo y resolverá todas tus dudas.</p>
 					<ul class="checklist">
 						<li>✓ Setup profesional incluido ($300 de valor)</li>
@@ -295,6 +340,101 @@
 		transition: background .2s, transform .2s;
 	}
 	.btn-hero:hover { background: #fbbf24; transform: translateY(-2px); }
+
+
+	/* Utilidad: texto real, legible por lectores de pantalla y por Google,
+	   pero fuera del flujo visual. Se usa para completar el esquema de
+	   encabezados donde el diseño no pide un título visible. */
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+	}
+
+	/* FAQ */
+	.faq { padding: 80px 0; background: #f8fafc; }
+	.faq h2 {
+		text-align: center;
+		font-size: clamp(1.4rem, 3vw, 1.9rem);
+		font-weight: 700;
+		color: #0f172a;
+		margin-bottom: 12px;
+	}
+	.faq-intro {
+		text-align: center;
+		color: #64748b;
+		font-size: 1rem;
+		line-height: 1.7;
+		max-width: 620px;
+		margin: 0 auto 40px;
+	}
+	.faq-list {
+		max-width: 780px;
+		margin: 0 auto;
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+	.faq-item {
+		background: #fff;
+		border: 1px solid #e2e8f0;
+		border-radius: 12px;
+		overflow: hidden;
+		transition: border-color .2s, box-shadow .2s;
+	}
+	.faq-item[open] {
+		border-color: #cbd5e1;
+		box-shadow: 0 4px 16px rgba(15, 23, 42, .06);
+	}
+	.faq-item summary {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+		padding: 20px 24px;
+		cursor: pointer;
+		list-style: none;
+	}
+	.faq-item summary::-webkit-details-marker { display: none; }
+	.faq-item summary:hover h3 { color: #2563eb; }
+	.faq-item summary h3 {
+		font-size: 1rem;
+		font-weight: 600;
+		line-height: 1.5;
+		color: #0f172a;
+		margin: 0;
+		transition: color .2s;
+	}
+	.faq-chevron {
+		flex-shrink: 0;
+		width: 10px;
+		height: 10px;
+		border-right: 2px solid #94a3b8;
+		border-bottom: 2px solid #94a3b8;
+		transform: rotate(45deg) translateY(-25%);
+		transition: transform .2s;
+	}
+	.faq-item[open] .faq-chevron { transform: rotate(225deg) translateY(-25%); }
+	.faq-item p {
+		padding: 0 24px 22px;
+		margin: 0;
+		font-size: .95rem;
+		line-height: 1.75;
+		color: #475569;
+	}
+	.faq-cta {
+		text-align: center;
+		margin-top: 36px;
+		font-size: .95rem;
+		color: #64748b;
+	}
+	.faq-cta a { color: #2563eb; font-weight: 600; text-decoration: none; }
+	.faq-cta a:hover { text-decoration: underline; }
 
 	/* FEATURES */
 	.features { padding: 80px 0; background: #f8fafc; }

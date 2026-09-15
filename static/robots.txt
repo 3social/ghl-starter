@@ -1,3 +1,16 @@
-# allow crawling everything by default
+# https://ghl.flamiagroup.com/robots.txt
+# Regla general: todo el contenido de valor es público y rastreable.
+
 User-agent: *
-Disallow:
+Allow: /
+
+# Páginas de confirmación: sin valor de búsqueda y contaminan la medición
+# de conversiones si alguien aterriza en ellas desde la SERP.
+Disallow: /gracias
+Disallow: /gracias.html
+
+# Nota: /_app/ queda deliberadamente permitido. Google necesita descargar el
+# CSS y el JS para renderizar la página como la ve un usuario; bloquearlos
+# haría que el rastreador viera un sitio sin estilos.
+
+Sitemap: https://ghl.flamiagroup.com/sitemap.xml

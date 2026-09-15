@@ -1,13 +1,66 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  ghl.flamiagroup.com — configuración de servidor
+#
+#  ORDEN DE LAS REGLAS: las RewriteCond aplican ÚNICAMENTE a la RewriteRule
+#  que las sigue de inmediato. Por eso los dos `!-f` / `!-d` van pegados a la
+#  regla de fallback y no a la de /gracias: si van arriba, la regla de
+#  fallback queda sin condiciones y reescribe TODO —incluidos logo.png,
+#  sitemap.xml y los módulos de _app/— hacia index.html.
+# ─────────────────────────────────────────────────────────────────────────────
+
 Options -MultiViews
 RewriteEngine On
 RewriteBase /
 
-# Serve existing files/dirs directly
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-
-# Route /gracias to gracias.html
+# Ruta /gracias → gracias.html
 RewriteRule ^gracias/?$ /gracias.html [L]
 
-# Fallback to index.html
+# Fallback SPA: solo para rutas que no existen como archivo ni como directorio.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ /index.html [L]
+
+# ── Cabeceras ───────────────────────────────────────────────────────────────
+<IfModule mod_headers.c>
+	# Hostinger inyecta un CSP restrictivo que bloquea los módulos ES de
+	# SvelteKit. Lo retiramos para que el sitio pueda ejecutar su JavaScript.
+	Header always unset Content-Security-Policy
+	Header always unset X-Content-Security-Policy
+
+	# El sitemap y el robots.txt deben servirse con su tipo correcto.
+	<FilesMatch "\.xml$">
+		Header set Content-Type "application/xml; charset=utf-8"
+	</FilesMatch>
+
+	Header always set X-Content-Type-Options "nosniff"
+	Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# ── Compresión ──────────────────────────────────────────────────────────────
+# Core Web Vitals es factor de posicionamiento: cada KB que no viaja es LCP
+# que no se retrasa.
+<IfModule mod_deflate.c>
+	AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml
+	AddOutputFilterByType DEFLATE application/javascript application/x-javascript
+	AddOutputFilterByType DEFLATE application/json application/xml
+	AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# ── Caché ───────────────────────────────────────────────────────────────────
+<IfModule mod_expires.c>
+	ExpiresActive On
+
+	# Los assets de _app/immutable llevan hash en el nombre: cachearlos un año
+	# es seguro, porque un cambio de contenido cambia la URL.
+	<FilesMatch "\.(js|css|woff2)$">
+		ExpiresDefault "access plus 1 year"
+		Header set Cache-Control "public, immutable, max-age=31536000"
+	</FilesMatch>
+
+	ExpiresByType image/png "access plus 6 months"
+	ExpiresByType image/svg+xml "access plus 6 months"
+	ExpiresByType image/webp "access plus 6 months"
+
+	# El HTML nunca se cachea de forma agresiva: es lo que cambia al redesplegar.
+	ExpiresByType text/html "access plus 0 seconds"
+</IfModule>

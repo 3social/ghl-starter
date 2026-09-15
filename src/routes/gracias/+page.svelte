@@ -1,6 +1,19 @@
-<svelte:head>
-	<title>¡Gracias! Te contactamos pronto</title>
-</svelte:head>
+<script lang="ts">
+	import Seo from '$lib/seo/Seo.svelte';
+</script>
+
+<!--
+	`noindex` es deliberado. Una página de gracias no responde a ninguna
+	búsqueda: si Google la indexa, la gente aterriza en ella sin haber llenado
+	el formulario y cada visita orgánica se contabiliza como conversión,
+	corrompiendo la única métrica que importa en esta landing.
+-->
+<Seo
+	title="¡Gracias! Te contactamos pronto — GHL Starter"
+	description="Recibimos tu solicitud de subcuenta de GoHighLevel. Un asesor de Flamia Group te contactará en las próximas 24 horas."
+	path="/gracias"
+	noindex
+/>
 
 <main class="gracias">
 	<div class="card">

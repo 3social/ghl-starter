@@ -21,12 +21,21 @@ Landing page de captación de leads para vender subcuentas GoHighLevel (GHL) a $
 ## Estructura
 
 ```
+src/lib/seo/
+  site.ts             # Fuente única: dominio, marca, precio, países servidos
+  faq.ts              # Preguntas frecuentes → sección visible Y schema FAQPage
+  schema.ts           # Constructores de JSON-LD (Organization, Service, FAQPage)
+  Seo.svelte          # Emite title, description, canonical, OG, Twitter, JSON-LD
 src/routes/
   +layout.ts          # export const prerender = true (requerido por adapter-static)
   +layout.svelte      # Carga fuente Inter de Google Fonts
-  +page.svelte        # Landing page principal (hero + features + form)
+  +page.svelte        # Landing page principal (hero + features + FAQ + form)
   gracias/
-    +page.svelte      # Página de confirmación post-submit
+    +page.svelte      # Página de confirmación post-submit (noindex)
+  sitemap.xml/
+    +server.ts        # Genera build/sitemap.xml en tiempo de build
+docs/
+  SEO.md              # Estrategia: competencia, keywords, roadmap
 build/                # Output estático listo para Hostinger (gitignoreado)
 ```
 
@@ -42,19 +51,32 @@ npm run build        # Genera build/ con los archivos estáticos
 ```
 
 Luego en Hostinger File Manager, reemplazar el contenido de `public_html/build/` con el nuevo `build/`:
-- Siempre subir: `index.html`, `gracias.html`, carpeta `_app/` completa
-- El `.htaccess` y `logo.png` solo si cambiaron
+- Siempre subir: `index.html`, `gracias.html`, `sitemap.xml`, carpeta `_app/` completa
+- El `.htaccess`, `robots.txt` y `logo.png` solo si cambiaron
 
 **Nota:** `www.ghl.flamiagroup.com` no funciona — es normal, los subdominios no usan `www`.
 
 ## .htaccess
 
-El `build/.htaccess` maneja dos cosas:
+El `build/.htaccess` maneja:
 1. Redirige `/gracias` → `gracias.html`
 2. Fallback SPA a `index.html` para rutas que no existen como archivo
 3. Sobreescribe el CSP restrictivo de Hostinger para que SvelteKit pueda ejecutar sus módulos JS
+4. Compresión (mod_deflate) y caché de larga duración para los assets con hash
 
-El orden de las reglas importa: las `RewriteCond` deben estar **antes** de la regla fallback, no antes de la regla de `/gracias`.
+El orden de las reglas importa: las `RewriteCond` deben estar **antes** de la regla fallback, no antes de la regla de `/gracias`. Una `RewriteCond` solo aplica a la `RewriteRule` inmediatamente siguiente; si se ponen arriba, la regla de fallback queda sin condiciones y reescribe todos los assets hacia `index.html`.
+
+## SEO
+
+La estrategia completa —competencia, keywords, roadmap— vive en `docs/SEO.md`.
+
+Reglas de oro al tocar el sitio:
+- Ninguna página escribe `<meta>` a mano. Se usa `<Seo />` de `$lib/seo`.
+- Un solo `<h1>` por página, y debe contener la keyword principal.
+- Las FAQ se editan **solo** en `src/lib/seo/faq.ts`: el texto visible y el
+  schema salen de ahí. Si se desincronizan, Google penaliza.
+- Nunca añadir `review` ni `aggregateRating` al schema sin reseñas reales.
+- Toda ruta indexable nueva se agrega a `src/routes/sitemap.xml/+server.ts`.
 
 ## Comandos
 
