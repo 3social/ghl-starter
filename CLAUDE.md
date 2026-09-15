@@ -44,26 +44,33 @@ build/                # Output estático listo para Hostinger (gitignoreado)
 El subdominio `ghl.flamiagroup.com` tiene document root en `public_html/build/`.
 El site principal `flamiagroup.com` vive en `public_html/`.
 
-**Deploy automático desde Git.** Hostinger está conectado al repositorio y corre
-el build en el servidor: un push a `main` reconstruye y publica el sitio solo.
-**No se suben archivos por File Manager.**
+**El deploy es manual.** GitHub está conectado a la cuenta de Hostinger, pero
+este subdominio NO tiene build automático configurado: `website_type` es
+`other` (no `nodejs`) y el historial de builds está vacío. Un push a `main`
+no publica nada.
 
 ```bash
-npm run check        # Verificar antes de pushear
-npm run build        # Verificar que compila (opcional, local)
-git push origin main # Esto despliega
+npm run check        # Type-check
+npm run build        # Genera build/
 ```
 
-`build/` está gitignoreada a propósito: la genera Hostinger en cada deploy, no
-el repositorio. Correr `npm run build` en local sirve solo para verificar.
+Luego en Hostinger File Manager, reemplazar el contenido de
+`public_html/build/` con el nuevo `build/`. Subir **todo** lo que genera el
+build, incluidos los archivos ocultos:
 
-Ajustes del build en hPanel (Avanzado → Git):
-- Build command: `npm run build`
-- Output directory: `build`
+- `index.html`, `gracias.html`, `sitemap.xml`, `robots.txt`
+- carpeta `_app/` completa
+- `.htaccess` (oculto — el File Manager puede no mostrarlo por defecto)
+- `logo.png` solo si cambió
 
-Todo lo que vive en `static/` —`.htaccess`, `robots.txt`, `logo.png`— se copia
-automáticamente a `build/` durante el build, así que también se despliega solo.
-Al añadir un archivo estático nuevo, va en `static/`, nunca directo al servidor.
+`build/` está gitignoreada: es artefacto, no fuente. Todo lo que vive en
+`static/` se copia a `build/` durante el build, así que un archivo estático
+nuevo va en `static/`, nunca editado directo en el servidor — ahí se pierde
+en el siguiente despliegue.
+
+**Pendiente:** configurar el auto-deploy en hPanel (Avanzado → Git) con build
+command `npm run build` y output directory `build`. Mientras no exista, cada
+cambio requiere subida manual.
 
 **Nota:** `www.ghl.flamiagroup.com` no funciona — es normal, los subdominios no usan `www`.
 
@@ -76,6 +83,11 @@ El `build/.htaccess` maneja:
 4. Compresión (mod_deflate) y caché de larga duración para los assets con hash
 
 El orden de las reglas importa: las `RewriteCond` deben estar **antes** de la regla fallback, no antes de la regla de `/gracias`. Una `RewriteCond` solo aplica a la `RewriteRule` inmediatamente siguiente; si se ponen arriba, la regla de fallback queda sin condiciones y reescribe todos los assets hacia `index.html`.
+
+`static/.htaccess` es el espejo exacto de lo que corre en producción. Estuvo
+desincronizado —la copia del repo tenía el orden mal y le faltaba la cabecera
+CSP— porque se editó en el servidor sin reflejarlo aquí. Editarlo solo en el
+File Manager garantiza perder el cambio en el siguiente despliegue.
 
 ## SEO
 

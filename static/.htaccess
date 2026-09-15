@@ -1,33 +1,38 @@
 # ─────────────────────────────────────────────────────────────────────────────
 #  ghl.flamiagroup.com — configuración de servidor
 #
-#  ORDEN DE LAS REGLAS: las RewriteCond aplican ÚNICAMENTE a la RewriteRule
-#  que las sigue de inmediato. Por eso los dos `!-f` / `!-d` van pegados a la
-#  regla de fallback y no a la de /gracias: si van arriba, la regla de
-#  fallback queda sin condiciones y reescribe TODO —incluidos logo.png,
-#  sitemap.xml y los módulos de _app/— hacia index.html.
+#  Este archivo es el espejo exacto de lo que corre en producción, más
+#  compresión y caché. Si se edita en el servidor y no aquí, el cambio se
+#  pierde en el siguiente despliegue.
+#
+#  ORDEN DE LAS REGLAS: una RewriteCond aplica ÚNICAMENTE a la RewriteRule
+#  que la sigue de inmediato. Por eso los dos `!-f` / `!-d` van pegados a la
+#  regla de fallback: si se suben arriba, la de fallback queda sin
+#  condiciones y reescribe TODO —logo.png, sitemap.xml, los módulos de
+#  _app/— hacia index.html.
 # ─────────────────────────────────────────────────────────────────────────────
 
 Options -MultiViews
 RewriteEngine On
 RewriteBase /
 
+# Hostinger inyecta un CSP restrictivo que bloquea los módulos ES de
+# SvelteKit. Lo retiramos y ponemos uno propio que sí permite ejecutarlos.
+# `connect-src https:` es lo que habilita el fetch del formulario al webhook.
+Header always unset Content-Security-Policy
+Header always set Content-Security-Policy "default-src 'self' https: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; font-src 'self' https: data:; img-src 'self' data: https:; connect-src 'self' https:;"
+
 # Ruta /gracias → gracias.html
 RewriteRule ^gracias/?$ /gracias.html [L]
 
-# Fallback SPA: solo para rutas que no existen como archivo ni como directorio.
+# Sirve archivos y directorios existentes; fallback a index.html para el resto.
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ /index.html [L]
 
 # ── Cabeceras ───────────────────────────────────────────────────────────────
 <IfModule mod_headers.c>
-	# Hostinger inyecta un CSP restrictivo que bloquea los módulos ES de
-	# SvelteKit. Lo retiramos para que el sitio pueda ejecutar su JavaScript.
-	Header always unset Content-Security-Policy
-	Header always unset X-Content-Security-Policy
-
-	# El sitemap y el robots.txt deben servirse con su tipo correcto.
+	# El sitemap debe servirse como XML, no como texto plano.
 	<FilesMatch "\.xml$">
 		Header set Content-Type "application/xml; charset=utf-8"
 	</FilesMatch>
@@ -61,6 +66,6 @@ RewriteRule ^ /index.html [L]
 	ExpiresByType image/svg+xml "access plus 6 months"
 	ExpiresByType image/webp "access plus 6 months"
 
-	# El HTML nunca se cachea de forma agresiva: es lo que cambia al redesplegar.
+	# El HTML nunca se cachea agresivamente: es lo que cambia al redesplegar.
 	ExpiresByType text/html "access plus 0 seconds"
 </IfModule>
